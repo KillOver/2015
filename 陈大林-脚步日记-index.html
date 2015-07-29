@@ -1,0 +1,91 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />  
+<style type="text/css">  
+body, html,#l-map {width: 100%;height: 100%;overflow: hidden;margin:0;}  
+</style>  
+<script type="text/javascript" src="http://api.map.baidu.com/api?type=quick&ak=2jnD7GilMZUE2C4awAm0ZEip&v=1.0"></script>  
+<title>显示地图</title>  
+</head>  
+<body>  
+<div>
+		搜索: <input id="searchtext" type="text" style="width:100px; margin-right:10px;" />
+		<input type="button" value="查询" onclick="theLocation()" />
+</div>
+<div id="l-map"></div>  
+
+
+</body>
+</html>  
+<script type="text/javascript">  
+
+var map = new BMap.Map("l-map");  
+var point = new BMap.Point(116.404, 39.915);
+map.centerAndZoom(point, 15);  
+var zoomControl = new BMap.ZoomControl();
+map.addControl(zoomControl);
+var scaleControl = new BMap.ScaleControl();
+map.addControl(scaleControl);
+var marker = new BMap.Marker(point);        // 创建标注      
+map.addOverlay(marker);
+
+
+var content = new Array();
+content["天安门"] = "<tr>"+"<td>"+"我爱北京天安门，天安门上太阳升。终于看到天安门了，好激动！！  ——陈大林"+"</td>"+"</tr>"
+				+"<tr>"+"<td>"+"壮丽的天安门城楼！不虚此行！  ——郑先文"+"</td>"+"</tr>"
+				+"<tr>"+"<td>"+"天安门真是太宏伟了！！  ——唐浩然"+"</td>"+"</tr>";
+content["前门"] = "<tr>"+"<td>"+"刚刚看到天安门城楼，现在发现前门也一样壮观啊！  ——潘磊"+"</td>"+"</tr>"
+				+"<tr>"+"<td>"+"前门大街！！我要去！！  ——小红"+"</td>"+"</tr>";
+
+
+	function showInfo(e){
+		var point_tmp = new BMap.Point(e.point.lng, e.point.lat);
+		var location = document.getElementById("searchtext").value;
+		if(location!=""){
+			var content_tmp = "<table border = \"1\">"+ content[location] +"</table></br>"
+							+"我要发言：<input id=\"myView\" type=\"text\" style=\"width:100px; margin-right:10px;\" />"
+							+"<input type=\"button\" value=\"发表\" onclick=\"launchView()\" />"
+							+"<label><input name=\"publicBox\" id=\"ispublic\" type=\"checkbox\" value=\"\" />公开 </label>";
+			var infoWindow = new BMap.InfoWindow(content_tmp);  // 创建信息窗口对象
+			this.openInfoWindow(infoWindow, point_tmp);
+			document.getElementById('').onload = function (){
+				infoWindow.redraw(); 
+			}
+		}
+	}
+	map.addEventListener("click", showInfo);
+  
+	var local = new BMap.LocalSearch(map, {
+		renderOptions:{map: map}
+	});
+	
+	  
+	var myGeo = new BMap.Geocoder();
+	function theLocation(){
+		var location = document.getElementById("searchtext").value;
+		local.search(location);
+		
+	}
+	
+	function launchView(){
+		var view = document.getElementById("myView").value;
+		var location = document.getElementById("searchtext").value;
+		
+		
+		var ispublic = document.getElementById("ispublic");
+		if(ispublic.checked)
+		{
+			content[location] += ("<tr>"+"<td>"+view+"</td>"+"</tr>");
+		}
+		
+		else
+		{
+			content[location] += ("<tr>"+"<td>"+"<font color=\"red\">"+view+"</font>"+"</td>"+"</tr>");
+		}
+		
+	}
+
+
+</script>
